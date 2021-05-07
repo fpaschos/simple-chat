@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import { send } from 'process';
+import React, { useContext, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { RootState } from '../app/store';
+import { WebSocketContext } from '../websocket/WebsocketContext';
 
 const Channel: React.FC = () => {
     const channel = useSelector((s: RootState) => s.channel, shallowEqual)
     const [message, setMessage] = useState("");
+    const ws = useContext(WebSocketContext)
 
     const onMessageChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(ev.target.value);
@@ -12,7 +15,15 @@ const Channel: React.FC = () => {
 
     const onMessageKeyUp = (ev: React.KeyboardEvent<HTMLInputElement>) => {
         if (ev.code === "Enter") {
+            sendMessage(message)
+        }
+    }
+
+    const sendMessage = (message: string) => {
+        let m = message.trim()
+        if (m !== "") {
             console.log("Sending " + message)
+            ws?.sendMessage(message)
             setMessage("") // Clearing the message on enter
         }
     }
@@ -24,13 +35,12 @@ const Channel: React.FC = () => {
                 {channel.messages.map(m => <div>{m}</div>)}
             </div>
             <div>
-                <label htmlFor="message">Message:</label>
                 <input id="message" type="text"
                     value={message}
                     onKeyUp={(ev) => onMessageKeyUp(ev)}
                     onChange={(ev) => onMessageChange(ev)} />
 
-                <button>{'>'}</button>
+                <button onClick={() => sendMessage(message)}>{'>'}</button>
             </div>
         </>
     );
