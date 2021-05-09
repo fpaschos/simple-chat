@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { ChatMessage, ServerMessageType } from "../api/types";
-import { chatMessage } from "../channel/module";
+import { channelMessage } from "../channel/module";
 
 
 interface WSContextType {
@@ -49,8 +49,8 @@ const WebSocketProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
             }
 
             if (payload.type === ServerMessageType.ChatMessage) {
-                let p = payload as ChatMessage
-                dispatch(chatMessage(p.user, p.msg))
+                let msg = payload as ChatMessage
+                dispatch(channelMessage(msg))
             } else {
                 console.error(`WS Invalid message: ${payload} `)
             }

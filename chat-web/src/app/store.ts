@@ -4,7 +4,6 @@ import { channelReducer, InitialState as ChannelState } from "../channel/module"
 
 export type Action = {
     type: string,
-    payload: any,
 }
 
 export type RootState = {
